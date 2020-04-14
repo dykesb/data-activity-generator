@@ -1,0 +1,84 @@
+---
+title: "Question Bank"
+params:
+  key: TRUE
+  time: time
+  qlist: qlist
+  xvar: xvar
+  yvar: yvar
+  population: population
+  
+output: html_document
+---
+
+```{r set-seed-letters, include = FALSE}
+library(pander)
+library(readxl)
+
+Question_Bank <- read_excel("/cloud/project/Question_Bank.xlsx")
+set.seed(params$time)
+letters <- c("A. ", "B. ", "C. ", "D. ")
+```
+
+
+```{r question-function, include=FALSE, results='asis'} 
+
+qfun <- function(qnum, multchoice = TRUE) 
+{
+  if (multchoice == TRUE)
+  {
+    cat(unlist(Question_Bank[qnum, 1]), "\n\n")
+         
+    answers <- c(unlist(Question_Bank[qnum, 2]),
+                 unlist(Question_Bank[qnum, 3]),
+                 unlist(Question_Bank[qnum, 4]),
+                 unlist(Question_Bank[qnum, 5]))
+    
+    randomized_answers <- sample(answers)
+    
+    if (params$key == TRUE)
+    {
+      for (i in 1:length(answers))
+      {
+        if (randomized_answers[i] == answers[1]) {cat(letters[i], "<em>", randomized_answers[i], "</em>", "\n")}
+        else {cat(letters[i], randomized_answers[i], "\n\n")}
+      }
+    }
+    
+    else 
+    {
+      cat("A.", randomized_answers[1], "\n")
+              
+      cat("B.", randomized_answers[2], "\n")
+            
+      cat("C.", randomized_answers[3], "\n")   
+            
+      cat("D.", randomized_answers[4], "\n\n") 
+    }
+  }
+  
+  else
+  {
+    cat(unlist(Question_Bank[qnum, 1]), "\n\n\n\n\n\n\n\n")
+  }
+}
+```
+
+```{r question-bank, echo=FALSE}
+
+for (j in params$qlist)
+{
+  if (length(j) > 1)
+  {
+    qfun(j[1], j[2])
+  }
+
+  else qfun(j)
+}
+
+```
+
+```{r test, include=FALSE, results='asis'}
+params$qlist
+```
+
